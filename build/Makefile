@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /mnt/c/Users/M0J0/Documents/001_Self_Driving_Car/CarND-Path-Planning-Project
+CMAKE_SOURCE_DIR = /mnt/c/Users/Cheese/Documents/001_SDC/Path-Planning-Project
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /mnt/c/Users/M0J0/Documents/001_Self_Driving_Car/CarND-Path-Planning-Project/build
+CMAKE_BINARY_DIR = /mnt/c/Users/Cheese/Documents/001_SDC/Path-Planning-Project/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/M0J0/Documents/001_Self_Driving_Car/CarND-Path-Planning-Project/build/CMakeFiles /mnt/c/Users/M0J0/Documents/001_Self_Driving_Car/CarND-Path-Planning-Project/build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/Cheese/Documents/001_SDC/Path-Planning-Project/build/CMakeFiles /mnt/c/Users/Cheese/Documents/001_SDC/Path-Planning-Project/build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/M0J0/Documents/001_Self_Driving_Car/CarND-Path-Planning-Project/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/Cheese/Documents/001_SDC/Path-Planning-Project/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target

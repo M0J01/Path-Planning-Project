@@ -1,4 +1,4 @@
-# Install script for directory: /mnt/c/Users/M0J0/Documents/001_Self_Driving_Car/CarND-Path-Planning-Project
+# Install script for directory: /mnt/c/Users/Cheese/Documents/001_SDC/Path-Planning-Project
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/mnt/c/Users/M0J0/Documents/001_Self_Driving_Car/CarND-Path-Planning-Project/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/mnt/c/Users/Cheese/Documents/001_SDC/Path-Planning-Project/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
