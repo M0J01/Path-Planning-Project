@@ -10,6 +10,40 @@
 #include "json.hpp"
 #include "spline.h"
 
+
+/**
+ * lane
+ * our speed
+ * other car data
+ *
+ * check car speed in front of us
+ * check car speed to side of us
+ * check car speed to far side of us
+ * if speed to side > speed in front && is safe, switch to that lane
+ * if speed to far side > speed in front && middle lane safe, switch to middle lane
+ *
+ * check car distance/speed/safe left lane
+ * check car distance/speed/safe middle lane
+ * check car distance/speed/safe right lane
+ *
+ * if lane == left && middle lane faster && middle_lane_safe
+ * 	switch to middle lane
+ * else	if lane == left && right lane faster && middle_lane_safe
+ * 	switch to middle lane
+ *
+ *
+ * if lane == middle && left lane faster than right lane && left_lane_safe
+ * 	switch to left lane
+ * else	if lane == middle && right lane faster than left lane && right_lane_safe
+ * 	switch to right lane
+ *
+ * if lane == right && middle lane faster && middle_lane_safe
+ * 	switch to middle lane
+ * else	if lane == right && left lane faster && middle_lane_safe
+ * 	switch to middle lane
+ */
+
+
 using namespace std;
 
 // for convenience
@@ -164,6 +198,13 @@ vector<double> getXY(double s, double d, const vector<double> &maps_s, const vec
 
 }
 
+bool isLaneOpen(vector<double> &sensorFusion, int myCarLane){
+
+	bool openess = false;
+
+
+	return openess;
+}
 
 
 int main() {
@@ -270,6 +311,12 @@ int main() {
 					// previous path size
 					int prev_size = previous_path_x.size();
 
+
+
+
+					// Lane Logic
+
+
 					if (prev_size > 0)
 					{
 						car_s = end_path_s;
@@ -279,68 +326,123 @@ int main() {
 					bool too_close = false;
 					bool left_lane_open = true;
 					bool right_lane_open = true;
+
+
+					bool lane_zero_open = true;
+					bool lane_one_open =true;
+					bool lane_two_open = true;
+
+					bool left_lane_safe = true;
+					bool middle_lane_safe = true;
+					bool right_lane_safe = true;
+
+					float left_lane_speed = 100;
+					float middle_lane_speed = 100;
+					float right_lane_speed = 100;
+
 					// Run through sensor fusion data
 					for (int i =0; i < sensor_fusion.size(); i++) {
 
-						//car is in my lane
+						// grab other car telemetry
 						float d = sensor_fusion[i][6];
             double check_car_s = sensor_fusion[i][5];
             double vy = sensor_fusion[i][4];
             double vx = sensor_fusion[i][3];
             double check_speed = sqrt(vx*vx + vy*vy);
-						if (d < (2 + 4 * lane + 2) && d > (2 + 4 * lane - 2)) {
+						double check_car_current_s = check_car_s;
+						check_car_s += ((double)prev_size*.02*check_speed);
 
-							// see if the car is within 30 meters
-							check_car_s += ((double)prev_size*.02*check_speed);
-							if((check_car_s > car_s) && ((check_car_s - car_s) < 30)){
-
-								// do some logic to determine what reference velocity should be used.
-								// Also, rais a flag to check for switching lanes?
-								//ref_vel = 29.5;
+						// check car is in left lane
+						if( 0 < d && d < 4){
+							// check for positional safety
+							if ((check_car_current_s > car_s - 10) && (check_car_current_s < car_s + 10)){
+								left_lane_safe = false;
+							}
+							// find slowest speed of left lane cars within 30 meters
+							if ((check_car_s > car_s) && (check_car_s - car_s < 25)){
+								// set slowest speed
+								if (check_speed < left_lane_speed){
+									left_lane_speed = check_speed;
+								}
+							}
+							// extra speed controller logic for right now
+							// Change me!
+							// Change me!
+							if ((check_car_s > car_s) && (check_car_s - car_s < 25) && (lane == 0)){
 								too_close = true;
-
-								//car is in lane to the left
-
-								//car is in lane to the right
-
-								// Set want to change lane flag
-								// Check somehow if let lane is open
-								// Check if right lane is open
-								// Try to change lane to that lane
-
-								// Adv. Try to get into a position to be able to change lanes
-
 							}
 						}
-            //Check left lane open
-            // Very primative. Just checks for position,
-            else if ((lane > 0) && d < (2 + 4 * (lane-1) + 2) && d > (2 + 4 * (lane - 1) - 2)) {
-  						// see if the car is within 30 meters
-  						check_car_s += ((double)prev_size*.02*check_speed);
-  						if((check_car_s > car_s) && ((check_car_s - car_s) < 30)){
-                left_lane_open = false;
-              }
-            }
-            //Check right lane open
-            else if ((lane < 2) && d < (2 + 4 * (lane+1) + 2) && d > (2 + 4 * (lane + 1) - 2)) {
 
-							// see if the car is within 30 meters
-							check_car_s += ((double)prev_size*.02*check_speed);
-							if((check_car_s > car_s) && ((check_car_s - car_s) < 30)){
-                right_lane_open = false;
-            }
-          }
-}
+						// check car is in middle lane
+						else if( 4 < d && d < 8){
+							// check for positional safety
+							if ((check_car_current_s > car_s - 10) && (check_car_current_s < car_s + 10)){
+								middle_lane_safe = false;
+							}
+							// find slowest speed of left lane cars within 30 meters
+							if ((check_car_s > car_s) && (check_car_s - car_s < 25)){
+								// set slowest speed
+								if (check_speed < middle_lane_speed){
+									middle_lane_speed = check_speed;
+								}
+							}
+							// extra speed controller logic for right now
+							// Change me!
+							// Change me!
+							if ((check_car_s > car_s) && (check_car_s - car_s < 25) && (lane == 1)){
+								too_close = true;
+							}
+						}
+						// check car is in right lane
+						else if( 8 < d && d < 12){
+							// check for positional safety
+							if ((check_car_current_s > car_s - 10) && (check_car_current_s < car_s + 10)){
+								right_lane_safe = false;
+							}
+							// find slowest speed of left lane cars within 30 meters
+							if ((check_car_s > car_s) && (check_car_s - car_s < 25)){
+								// set slowest speed
+								if (check_speed < right_lane_speed){
+									right_lane_speed = check_speed;
+								}
+							}
+							// extra speed controller logic for right now
+							// Change me!
+							// Change me!
+							if ((check_car_s > car_s) && (check_car_s - car_s < 25) && (lane == 2)){
+								too_close = true;
+							}
+						}
+					}
 					// If cars are too close, Slow Down!
-					if(too_close)
-					{
-            if (left_lane_open && lane > 0){
-              lane -=1;
-            }
-            else if (right_lane_open && lane < 2){
-              lane+=1;
-            }
+					if(too_close) {  // Move from left lane
+						if (lane == 0) {
+							if (middle_lane_safe) {  // could umbrella lane 0 and 2 under if(middle_lane_Safe, however this is more readable
+								if ((right_lane_speed > left_lane_speed) || (middle_lane_speed > left_lane_speed)) {
+									lane = 1;
+								}
+							} // Move from middle lane
+						}
+						else if (lane == 1) {
+								if (left_lane_speed > middle_lane_speed) {
+									if ((right_lane_speed >= left_lane_speed) && right_lane_safe) {
+										lane = 2;
+									} else if (left_lane_safe) {
+										lane = 0;
+									}
+								}
+							} // Move from right lane
+						else if (lane == 2) {
+								if (middle_lane_safe) {
+									if ((left_lane_speed > right_lane_speed) || (middle_lane_speed > right_lane_speed)) {
+										lane = 1;
+									}
+								}
+							}
 						ref_vel -= .224;
+						// calculate max jerk allowed, and calculate how many m/s change that can be.
+						// then choose a following distance related to our current speed
+						// then choose a velocity deceleration to match our current lane partner
 					}
 
 						// If cars not too close, Speed up to max!
@@ -349,14 +451,10 @@ int main() {
 						ref_vel += .224;
 					}
 
+					// Program dominant strategy middle lane driving
 
 
-
-
-
-
-
-
+						// Path Planning
 
 					vector<double> ptsx;
 					vector<double> ptsy;
