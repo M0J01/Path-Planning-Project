@@ -231,12 +231,12 @@ int main() {
 
       if (s != "") {
         auto j = json::parse(s);
-        
+
         string event = j[0].get<string>();
-        
+
         if (event == "telemetry") {
           // j[1] is the data JSON object
-          
+
         	// Main car's localization Data
           	double car_x = j[1]["x"];
           	double car_y = j[1]["y"];
@@ -248,7 +248,7 @@ int main() {
           	// Previous path data given to the Planner
           	auto previous_path_x = j[1]["previous_path_x"];
           	auto previous_path_y = j[1]["previous_path_y"];
-          	// Previous path's end s and d values 
+          	// Previous path's end s and d values
           	double end_path_s = j[1]["end_path_s"];
           	double end_path_d = j[1]["end_path_d"];
 
@@ -277,18 +277,18 @@ int main() {
 
 					// Current Lane Too Close Check for a single car
 					bool too_close = false;
-					//bool left_lane_open = true;
-					//bool right_lane_open = true;
+					bool left_lane_open = true;
+					bool right_lane_open = true;
 					// Run through sensor fusion data
 					for (int i =0; i < sensor_fusion.size(); i++) {
 
 						//car is in my lane
 						float d = sensor_fusion[i][6];
+            double check_car_s = sensor_fusion[i][5];
+            double vy = sensor_fusion[i][4];
+            double vx = sensor_fusion[i][3];
+            double check_speed = sqrt(vx*vx + vy*vy);
 						if (d < (2 + 4 * lane + 2) && d > (2 + 4 * lane - 2)) {
-							double check_car_s = sensor_fusion[i][5];
-							double vy = sensor_fusion[i][4];
-							double vx = sensor_fusion[i][3];
-							double check_speed = sqrt(vx*vx + vy*vy);
 
 							// see if the car is within 30 meters
 							check_car_s += ((double)prev_size*.02*check_speed);
@@ -298,13 +298,6 @@ int main() {
 								// Also, rais a flag to check for switching lanes?
 								//ref_vel = 29.5;
 								too_close = true;
-
-								// I am in left lane
-								if (lane > 0)
-								{
-									// Check car in middle lane
-									lane = 0;
-								}
 
 								//car is in lane to the left
 
@@ -319,12 +312,34 @@ int main() {
 
 							}
 						}
-					}
+            //Check left lane open
+            // Very primative. Just checks for position,
+            else if ((lane > 0) && d < (2 + 4 * (lane-1) + 2) && d > (2 + 4 * (lane - 1) - 2)) {
+  						// see if the car is within 30 meters
+  						check_car_s += ((double)prev_size*.02*check_speed);
+  						if((check_car_s > car_s) && ((check_car_s - car_s) < 30)){
+                left_lane_open = false;
+              }
+            }
+            //Check right lane open
+            else if ((lane < 2) && d < (2 + 4 * (lane+1) + 2) && d > (2 + 4 * (lane + 1) - 2)) {
 
-
+							// see if the car is within 30 meters
+							check_car_s += ((double)prev_size*.02*check_speed);
+							if((check_car_s > car_s) && ((check_car_s - car_s) < 30)){
+                right_lane_open = false;
+            }
+          }
+}
 					// If cars are too close, Slow Down!
 					if(too_close)
 					{
+            if (left_lane_open && lane > 0){
+              lane -=1;
+            }
+            else if (right_lane_open && lane < 2){
+              lane+=1;
+            }
 						ref_vel -= .224;
 					}
 
@@ -445,7 +460,7 @@ int main() {
 
           	//this_thread::sleep_for(chrono::milliseconds(1000));
           	ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
-          
+
         }
       } else {
         // Manual driving
