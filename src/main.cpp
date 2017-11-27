@@ -355,7 +355,7 @@ int main() {
 						// check car is in left lane
 						if( 0 < d && d < 4){
 							// check for positional safety
-							if ((check_car_current_s > (car_s_current - 5)) && (check_car_current_s < (car_s_current + 15))){
+							if ((check_car_current_s > (car_s_current - 8)) && (check_car_current_s < (car_s_current + 15))){
 								left_lane_safe = false;
 							}
 							// find slowest speed of left lane cars within 30 meters
@@ -376,7 +376,7 @@ int main() {
 						// check car is in middle lane
 						else if( 4 < d && d < 8){
 							// check for positional safety
-							if ((check_car_current_s > (car_s_current - 5)) && (check_car_current_s < (car_s_current + 15))){
+							if ((check_car_current_s > (car_s_current - 8)) && (check_car_current_s < (car_s_current + 15))){
 								middle_lane_safe = false;
 							}
 							// find slowest speed of left lane cars within 30 meters
@@ -396,7 +396,7 @@ int main() {
 						// check car is in right lane
 						else if( 8 < d && d < 12){
 							// check for positional safety
-							if ((check_car_current_s > (car_s_current - 5)) && (check_car_current_s < (car_s_current + 15))){
+							if ((check_car_current_s > (car_s_current - 8)) && (check_car_current_s < (car_s_current + 15))){
 								right_lane_safe = false;
 							}
 							// find slowest speed of left lane cars within 30 meters

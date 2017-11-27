@@ -41,9 +41,19 @@ on each lane. We take advantage of only having 3 lanes in this case, and use 3 b
 well as 3 doubles, left, middle, right_lane_speed in order to store the information gathered. Each sensed vehicle is classified
 into the left, middle, or right lane based off it's sensor fusion d position.
 
-Each lane is initialized to safe, and logic is performed to ensure this is true. If there is a car in a given lane that is within
-+/- 15 meters of our vehicles s position (car_s), then a lane is deemed not safe.
- 
+#### Lane Safe
+Each lane_safe bool is initialized to true, and logic is performed to test that statement. If there is a car in a given 
+lane that is within -5/+15 meters of our vehicles s position (car_s_current), then that lane is deemed not safe. A lane
+marked as not safe will not be a candidate target for a lane change.
+
+#### Lane Speed
+variable is initialized to 100 mps, and then set to the slowest sensed vehicle that is <= 50 meters ahead of our cars end_path_s
+coordinate on the road( end_path_s is the last coordinate point that our simulator would execute, if we were to stop feeding 
+it navigation coordinates). 
+
+This allows us to determine which lane is the fastest moving lane, reguardless of our vehicles current position.
+
+
 
 
 
