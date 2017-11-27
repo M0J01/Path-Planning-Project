@@ -1,3 +1,63 @@
+
+
+#Path Planning Project
+This project was completed as part of the[Udacity](https://Udacity.com)Self Driving Car Nanodegree.
+
+## Description
+The goal of this project is to have a car succesfully navigate through waypoints on a simulated course as quickly as possible, while obeying
+all traffic laws, and avoiding collisions with moving obstacles (namely other vehicles). 
+
+## Architecture
+The project is broken into **a few major parts**
+1.  Main
+2. h.onMessage
+3. Lane Logic
+4. Path Planning
+
+###Main
+Main serves to initialize key variables such as the length of the road, our starting position/velocity, and collect our
+map waypoints. Main also serves as the container for our message exchange with the simulator. 
+
+It is important to note that Main is only executed until the simulator begins exchanging messages, after which 
+h.onMessage becomes our primary loop.
+
+###h.onMessage
+h.onMessage serves as our main loop once the simulator begins. This code is responsible for consuming environment data from the 
+simulator, and pushing path planning data to the simulator.
+
+The beggining of this section is responsible for decoding messages from the simulator and storing that data into
+variables i.e. car_speed, car_x, car_y, and sensor_fusion (Information about other objects on the road). The simulator also
+sends information about how much of the previous path planning data was executed. This information is stored in the vectors
+previous_path_x and previous_path_y. Finally, a new vector is initialized for path data that will be pushed to the simulator during 
+this cycle. 
+
+h.onMessage contains Lane Logic and Path Planning sections that are responsible for determining the path to be pushed to the
+simulator
+
+###Lane Logic
+Lane Logic uses information from Sensor Fusion, and our cars current trajectory in order to determine whether a lane change
+should occur. The first part of Lane Logic itterates through each of our sensor data, and gathers safety and speed information
+on each lane. We take advantage of only having 3 lanes in this case, and use 3 bools left, middle, right_lane_safe, as 
+well as 3 doubles, left, middle, right_lane_speed in order to store the information gathered. Each sensed vehicle is classified
+into the left, middle, or right lane based off it's sensor fusion d position.
+
+Each lane is initialized to safe, and logic is performed to ensure this is true. If there is a car in a given lane that is within
++/- 15 meters of our vehicles s position (car_s), then a lane is deemed not safe.
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # CarND-Path-Planning-Project
 Self-Driving Car Engineer Nanodegree Program
    

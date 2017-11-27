@@ -316,7 +316,7 @@ int main() {
 
 					// Lane Logic
 
-
+					double car_s_current = car_s;
 					if (prev_size > 0)
 					{
 						car_s = end_path_s;
@@ -355,11 +355,11 @@ int main() {
 						// check car is in left lane
 						if( 0 < d && d < 4){
 							// check for positional safety
-							if ((check_car_current_s > car_s - 10) && (check_car_current_s < car_s + 10)){
+							if ((check_car_current_s > (car_s_current - 5)) && (check_car_current_s < (car_s_current + 15))){
 								left_lane_safe = false;
 							}
 							// find slowest speed of left lane cars within 30 meters
-							if ((check_car_s > car_s) && (check_car_s - car_s < 25)){
+							if ((check_car_s > car_s) && (check_car_s - car_s < 50)){
 								// set slowest speed
 								if (check_speed < left_lane_speed){
 									left_lane_speed = check_speed;
@@ -376,11 +376,11 @@ int main() {
 						// check car is in middle lane
 						else if( 4 < d && d < 8){
 							// check for positional safety
-							if ((check_car_current_s > car_s - 10) && (check_car_current_s < car_s + 10)){
+							if ((check_car_current_s > (car_s_current - 5)) && (check_car_current_s < (car_s_current + 15))){
 								middle_lane_safe = false;
 							}
 							// find slowest speed of left lane cars within 30 meters
-							if ((check_car_s > car_s) && (check_car_s - car_s < 25)){
+							if ((check_car_s > car_s) && (check_car_s - car_s < 50)){
 								// set slowest speed
 								if (check_speed < middle_lane_speed){
 									middle_lane_speed = check_speed;
@@ -396,11 +396,11 @@ int main() {
 						// check car is in right lane
 						else if( 8 < d && d < 12){
 							// check for positional safety
-							if ((check_car_current_s > car_s - 10) && (check_car_current_s < car_s + 10)){
+							if ((check_car_current_s > (car_s_current - 5)) && (check_car_current_s < (car_s_current + 15))){
 								right_lane_safe = false;
 							}
 							// find slowest speed of left lane cars within 30 meters
-							if ((check_car_s > car_s) && (check_car_s - car_s < 25)){
+							if ((check_car_s > car_s) && (check_car_s - car_s < 50)){
 								// set slowest speed
 								if (check_speed < right_lane_speed){
 									right_lane_speed = check_speed;
@@ -421,13 +421,13 @@ int main() {
 								if ((right_lane_speed > left_lane_speed) || (middle_lane_speed > left_lane_speed)) {
 									lane = 1;
 								}
-							} // Move from middle lane
-						}
+							}
+						} // Move from middle lane
 						else if (lane == 1) {
 								if (left_lane_speed > middle_lane_speed) {
-									if ((right_lane_speed >= left_lane_speed) && right_lane_safe) {
+									if ((right_lane_speed >= left_lane_speed) && right_lane_safe && (car_d > 4) && (car_d < 8)) {
 										lane = 2;
-									} else if (left_lane_safe) {
+									} else if (left_lane_safe && (car_d > 4) && (car_d < 8)) {
 										lane = 0;
 									}
 								}
@@ -439,7 +439,13 @@ int main() {
 									}
 								}
 							}
-						ref_vel -= .224;
+						if ((lane == 0) && (ref_vel >= left_lane_speed)){
+							ref_vel -= .224;
+						}else if ((lane == 1) && (ref_vel >= middle_lane_speed)){
+							ref_vel -= .224;
+						}else if ((lane == 2) && (ref_vel >= right_lane_speed)){
+							ref_vel -= .224;
+						}
 						// calculate max jerk allowed, and calculate how many m/s change that can be.
 						// then choose a following distance related to our current speed
 						// then choose a velocity deceleration to match our current lane partner
@@ -452,6 +458,7 @@ int main() {
 					}
 
 					// Program dominant strategy middle lane driving
+					// Never mind, shifting lanes when not necissary will add extra time to the clock.
 
 
 						// Path Planning
